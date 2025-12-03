@@ -1,5 +1,11 @@
 name: CD - GitHub Pages
 
+# Grant the workflow the permissions required to push to gh-pages
+permissions:
+  contents: write    # allow writing commits/branches
+  pages: write       # allow publishing to GitHub Pages
+  id-token: write    # not strictly required, but safe to include
+
 on:
   push:
     branches:
@@ -11,11 +17,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0       # ensure full history for peaceiris action (safe)
+          persist-credentials: true
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./        # publier depuis la racine du repo
+          publish_dir: ./        # publish from repo root
           publish_branch: gh-pages
           force_orphan: true
